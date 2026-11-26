@@ -31,6 +31,10 @@ module.exports = function (datei) {
     return this.db.prepare("SELECT * FROM message").all();
   };
 
+  // Eine Nachricht anhand ihrer ID abrufen
+  this.nachrichtAbrufen = function (id) {
+    return this.db.prepare("SELECT * FROM message WHERE id = ?").get(id);
+  };
   // Datenbankverbindung schliessen
   this.schliessen = function () {
     this.db.close();
