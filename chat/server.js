@@ -27,6 +27,26 @@ app.get("/api/messages/:id", (req, res) => {
   res.json(nachricht);
 });
 
+// Eine neue Nachricht erstellen
+app.post("/api/messages", (req, res) => {
+  const { name, message } = req.body ?? {};
+
+  if (
+    typeof name !== "string" ||
+    typeof message !== "string" ||
+    name.trim() === "" ||
+    message.trim() === ""
+  ) {
+    return res.status(400).json({
+      fehler: "Name und Nachricht müssen ausgefüllt sein",
+    });
+  }
+
+  const nachricht = db.nachrichtErstellen(name.trim(), message.trim());
+
+  res.status(201).json(nachricht);
+});
+
 // Öffentliche Dateien aus dem Ordner public bereitstellen
 app.use(express.static(__dirname + "/public"));
 
