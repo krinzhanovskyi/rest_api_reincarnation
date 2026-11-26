@@ -1,44 +1,38 @@
-/* jshint esversion: 6 */
-
-module.exports = function (file) {
+module.exports = function (datei) {
   const Database = require("better-sqlite3");
 
-  this.db = new Database(file, {
-    //  verbose: console.log
-  });
+  this.db = new Database(datei);
 
-  this.connect = function (file) {
-    this.db = new Database(file, {
-      verbose: console.log,
-    });
-  };
-
-  this.sampleData = function () {
-    const insert = this.db.prepare(
-      "INSERT INTO message (name, message) VALUES (@name, @message)",
+  // Tabelle erstellen, falls sie noch nicht existiert
+  this.db.exec(`
+    CREATE TABLE IF NOT EXISTS message (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      message TEXT NOT NULL
     );
-    const insertMany = this.db.transaction((messages) => {
-      for (const message of messages) insert.run(message);
-    });
-    insertMany([
-      { name: "Admin", message: "Hallo Node.js!" },
-      { name: "Pablo", message: "Ola Node.js!" },
-      { name: "Paolo", message: "Ciao Node.js!" },
-    ]);
+  `);
+
+  // Beispieldaten nur einfügen, wenn die Tabelle leer ist
+  const abfrage = this.db.prepare("SELECT COUNT(*) AS anzahl FROM message");
+  const ergebnis = abfrage.get();
+
+  if (ergebnis.anzahl === 0) {
+    const einfuegen = this.db.prepare(
+      "INSERT INTO message (name, message) VALUES (?, ?)",
+    );
+
+    einfuegen.run("Admin", "Hallo Node.js!");
+    einfuegen.run("Pablo", "Guten Tag!");
+    einfuegen.run("Paolo", "Willkommen im Chat!");
+  }
+
+  // Alle Nachrichten aus der Datenbank abrufen
+  this.nachrichtenAbrufen = function () {
+    return this.db.prepare("SELECT * FROM message").all();
   };
 
-  this.sampleQuery = function (id) {
-    return this.db
-      .prepare("SELECT * FROM message WHERE id = ? ORDER BY ID;")
-      .get(id);
-  };
-
-  this.close = function () {
-    this.db.close((error) => {
-      if (error) {
-        return console.error(error.message);
-      }
-      console.log("Close the database connection.");
-    });
+  // Datenbankverbindung schliessen
+  this.schliessen = function () {
+    this.db.close();
   };
 };
