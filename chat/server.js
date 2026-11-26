@@ -8,43 +8,20 @@ const port = 3000;
 const Datenbank = require("./database.js");
 const db = new Datenbank("./messages.db");
 
+// Alle Nachrichten abrufen
 app.get("/api/messages", (req, res) => {
-  const nachrichten = db.nachrichtenAbrufen();
-  res.json({ messages: nachrichten });
+  res.json({ messages: db.nachrichtenAbrufen() });
 });
 
 // Eine einzelne Nachricht abrufen
 app.get("/api/messages/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const nachricht = db.nachrichtAbrufen(id);
-
-  if (!nachricht) {
-    return res.status(404).json({
-      fehler: "Nachricht nicht gefunden",
-    });
-  }
-
-  res.json(nachricht);
+  res.json(db.nachrichtAbrufen(Number(req.params.id)));
 });
 
 // Eine neue Nachricht erstellen
 app.post("/api/messages", (req, res) => {
-  const { name, message } = req.body ?? {};
-
-  if (
-    typeof name !== "string" ||
-    typeof message !== "string" ||
-    name.trim() === "" ||
-    message.trim() === ""
-  ) {
-    return res.status(400).json({
-      fehler: "Name und Nachricht müssen ausgefüllt sein",
-    });
-  }
-
-  const nachricht = db.nachrichtErstellen(name.trim(), message.trim());
-
-  res.status(201).json(nachricht);
+  const { name, message } = req.body;
+  res.status(201).json(db.nachrichtErstellen(name, message));
 });
 
 // Öffentliche Dateien aus dem Ordner public bereitstellen
