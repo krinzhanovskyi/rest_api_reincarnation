@@ -1,5 +1,9 @@
 const express = require("express");
 const app = express();
+
+// JSON-Daten aus eingehenden Anfragen lesen
+app.use(express.json());
+
 const port = 3000;
 const Datenbank = require("./database.js");
 const db = new Datenbank("./messages.db");
