@@ -9,6 +9,20 @@ app.get("/api/messages", (req, res) => {
   res.json({ messages: nachrichten });
 });
 
+// Eine einzelne Nachricht abrufen
+app.get("/api/messages/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const nachricht = db.nachrichtAbrufen(id);
+
+  if (!nachricht) {
+    return res.status(404).json({
+      fehler: "Nachricht nicht gefunden",
+    });
+  }
+
+  res.json(nachricht);
+});
+
 // Öffentliche Dateien aus dem Ordner public bereitstellen
 app.use(express.static(__dirname + "/public"));
 
