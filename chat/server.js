@@ -24,6 +24,13 @@ app.post("/api/messages", (req, res) => {
   res.status(201).json(db.nachrichtErstellen(name, message));
 });
 
+// Eine Nachricht redaktieren
+app.patch("/api/messages/:id", (req, res) => {
+  const { message } = req.body;
+  const id = Number(req.params.id);
+  res.json(db.nachrichtRedaktieren(message, id));
+});
+
 // Öffentliche Dateien aus dem Ordner public bereitstellen
 app.use(express.static(__dirname + "/public"));
 

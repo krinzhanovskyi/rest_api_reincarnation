@@ -46,6 +46,16 @@ module.exports = function (datei) {
 
     return this.nachrichtAbrufen(Number(ergebnis.lastInsertRowid));
   };
+
+  // Eine Nachricht redaktieren
+  this.nachrichtRedaktieren = function (nachricht, id) {
+    const bearbeiten = this.db.prepare(
+      "UPDATE message SET message = ? WHERE id = ?",
+    );
+    bearbeiten.run(nachricht, id);
+    return this.nachrichtAbrufen(id);
+  };
+
   // Datenbankverbindung schliessen
   this.schliessen = function () {
     this.db.close();
