@@ -5,3 +5,4 @@ chat/node_modules/
 dist/
 build/
 coverage/
+messages.db
