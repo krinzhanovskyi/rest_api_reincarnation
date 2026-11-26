@@ -35,6 +35,17 @@ module.exports = function (datei) {
   this.nachrichtAbrufen = function (id) {
     return this.db.prepare("SELECT * FROM message WHERE id = ?").get(id);
   };
+
+  // Eine neue Nachricht speichern
+  this.nachrichtErstellen = function (name, nachricht) {
+    const einfuegen = this.db.prepare(
+      "INSERT INTO message (name, message) VALUES (?, ?)",
+    );
+
+    const ergebnis = einfuegen.run(name, nachricht);
+
+    return this.nachrichtAbrufen(Number(ergebnis.lastInsertRowid));
+  };
   // Datenbankverbindung schliessen
   this.schliessen = function () {
     this.db.close();
